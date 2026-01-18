@@ -1,0 +1,51 @@
+﻿body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+.container {
+    max-width: 700px;
+    margin: auto;
+    padding: 20px;
+}
+
+button {
+    background-color: #1e88e5;
+    border: none;
+    padding: 12px 20px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+    border-radius: 6px;
+    margin-top: 15px;
+}
+
+    button:hover {
+        background-color: #1565c0;
+    }
+
+.hidden {
+    display: none;
+}
+
+.answer {
+    background: #1f1f1f;
+    padding: 10px;
+    margin: 8px 0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+    .answer:hover {
+        background: #2a2a2a;
+    }
+
+.correct {
+    background: #2e7d32;
+}
+
+.wrong {
+    background: #c62828;
+}
