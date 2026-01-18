@@ -12,15 +12,30 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadQuestions() {
-    fetch("questions.json")
-        .then(res => res.json())
+    fetch("./questions.json")
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("questions.json не найден");
+            }
+            return response.json();
+        })
         .then(data => {
             questions = data;
+            console.log("Вопросы загружены:", questions.length);
+        })
+        .catch(error => {
+            alert("Ошибка загрузки вопросов: " + error.message);
+            console.error(error);
         });
 }
 
 function startTest() {
-    testQuestions = shuffleArray(questions).slice(0, 50);
+    if (questions.length === 0) {
+        alert("Вопросы ещё не загрузились. Подожди 1–2 секунды и попробуй снова.");
+        return;
+    }
+
+    testQuestions = shuffleArray([...questions]).slice(0, 50);
     currentIndex = 0;
     score = 0;
 
@@ -85,4 +100,4 @@ function nextQuestion() {
 
 function shuffleArray(array) {
     return array.sort(() => Math.random() - 0.5);
-}
+}   
