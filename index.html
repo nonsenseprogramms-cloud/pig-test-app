@@ -3,28 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <title>Тест по свиноводству</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="manifest" href="manifest.json">
+
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div class="container">
+    <div id="app">
         <h1>Тест по свиноводству</h1>
 
-        <div id="startScreen">
-            <button id="startTestBtn">Начать тест</button>
-        </div>
+        <button id="startBtn">Начать тест</button>
 
-        <div id="testScreen" class="hidden">
+        <div id="test" class="hidden">
+            <div id="counter"></div>
             <div id="question"></div>
-
             <div id="answers"></div>
-
             <button id="nextBtn">Далее</button>
-
-            <div id="score"></div>
         </div>
     </div>
 
-    <script src="app.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
