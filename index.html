@@ -3,27 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <title>Тест по свиноводству</title>
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="manifest" href="manifest.json">
 
+    <link rel="manifest" href="manifest.json">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <div id="app">
-        <h1>Тест по свиноводству</h1>
+    <div class="container">
 
-        <button id="startBtn">Начать тест</button>
+        <h1>🐷 Тест по свиноводству</h1>
 
-        <div id="test" class="hidden">
-            <div id="counter"></div>
-            <div id="question"></div>
-            <div id="answers"></div>
-            <button id="nextBtn">Далее</button>
+        <!-- ВКЛАДКИ -->
+        <div class="tabs">
+            <button id="tabTest" class="active">Решать тест</button>
+            <button id="tabList">Список вопросов</button>
         </div>
+
+        <!-- ВКЛАДКА ТЕСТ -->
+        <div id="testTab">
+            <button id="startBtn">Начать тест</button>
+
+            <div id="test" class="hidden">
+                <div id="progress"></div>
+                <div id="question"></div>
+                <div id="answers"></div>
+                <button id="nextBtn">Далее</button>
+            </div>
+
+            <div id="result" class="hidden"></div>
+        </div>
+
+        <!-- ВКЛАДКА СПИСОК ВОПРОСОВ -->
+        <div id="listTab" class="hidden">
+            <input id="search" placeholder="Поиск вопроса..." />
+            <div id="questionsList"></div>
+        </div>
+
     </div>
 
-    <script src="script.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>

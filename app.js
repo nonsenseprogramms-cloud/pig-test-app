@@ -1,81 +1,149 @@
 ﻿let questions = [];
-let current = 0;
-let score = 0;
 let testQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let selected = null;
 
+// элементы
 const startBtn = document.getElementById("startBtn");
 const testDiv = document.getElementById("test");
 const questionDiv = document.getElementById("question");
 const answersDiv = document.getElementById("answers");
-const counterDiv = document.getElementById("counter");
 const nextBtn = document.getElementById("nextBtn");
+const resultDiv = document.getElementById("result");
+const progressDiv = document.getElementById("progress");
 
-startBtn.addEventListener("click", startTest);
-nextBtn.addEventListener("click", nextQuestion);
+const tabTest = document.getElementById("tabTest");
+const tabList = document.getElementById("tabList");
+const testTab = document.getElementById("testTab");
+const listTab = document.getElementById("listTab");
 
+const searchInput = document.getElementById("search");
+const questionsList = document.getElementById("questionsList");
+
+// загрузка вопросов
 fetch("questions.json")
     .then(r => r.json())
     .then(data => {
         questions = data;
-        console.log("Вопросы загружены:", questions.length);
-    })
-    .catch(e => alert("Ошибка загрузки questions.json"));
+        renderQuestionsList();
+    });
+
+// вкладки
+tabTest.onclick = () => {
+    tabTest.classList.add("active");
+    tabList.classList.remove("active");
+    testTab.classList.remove("hidden");
+    listTab.classList.add("hidden");
+};
+
+tabList.onclick = () => {
+    tabList.classList.add("active");
+    tabTest.classList.remove("active");
+    listTab.classList.remove("hidden");
+    testTab.classList.add("hidden");
+};
+
+// ---- ТЕСТ ----
+startBtn.onclick = startTest;
+nextBtn.onclick = nextQuestion;
 
 function startTest() {
-    if (questions.length < 1) {
-        alert("Вопросы не загружены");
-        return;
-    }
-
-    startBtn.style.display = "none";
-    testDiv.classList.remove("hidden");
-
     testQuestions = shuffle([...questions]).slice(0, 50);
-    current = 0;
+    currentIndex = 0;
     score = 0;
+
+    startBtn.classList.add("hidden");
+    resultDiv.classList.add("hidden");
+    testDiv.classList.remove("hidden");
 
     showQuestion();
 }
 
 function showQuestion() {
-    const q = testQuestions[current];
-    counterDiv.textContent = `Вопрос ${current + 1} / ${testQuestions.length} | Баллы: ${score}`;
-
-    questionDiv.textContent = q.question;
+    selected = null;
     answersDiv.innerHTML = "";
 
-    q.answers.forEach((a, i) => {
-        const btn = document.createElement("button");
-        btn.textContent = a;
-        btn.className = "answer";
-        btn.onclick = () => selectAnswer(i, q.correct);
-        answersDiv.appendChild(btn);
+    let q = testQuestions[currentIndex];
+    progressDiv.textContent = `Вопрос ${currentIndex + 1} из ${testQuestions.length}`;
+    questionDiv.textContent = q.question;
+
+    q.options.forEach((opt, i) => {
+        let div = document.createElement("div");
+        div.className = "answer";
+        div.textContent = opt;
+        div.onclick = () => selectAnswer(div, i, q.correct);
+        answersDiv.appendChild(div);
     });
 }
 
-function selectAnswer(selected, correct) {
-    const buttons = document.querySelectorAll(".answer");
+function selectAnswer(div, index, correct) {
+    if (selected !== null) return;
+    selected = index;
 
-    buttons.forEach((b, i) => {
-        b.disabled = true;
-        if (i === correct) b.classList.add("correct");
-        if (i === selected && i !== correct) b.classList.add("wrong");
+    document.querySelectorAll(".answer").forEach((el, i) => {
+        if (i === correct) el.classList.add("correct");
+        if (i === index && i !== correct) el.classList.add("wrong");
     });
 
-    if (selected === correct) score += 2;
+    if (index === correct) score += 2;
 }
 
 function nextQuestion() {
-    current++;
-    if (current >= testQuestions.length) {
-        questionDiv.textContent = `Тест завершён. Баллы: ${score}`;
-        answersDiv.innerHTML = "";
-        nextBtn.style.display = "none";
+    if (selected === null) return;
+
+    currentIndex++;
+    if (currentIndex >= testQuestions.length) {
+        finishTest();
     } else {
         showQuestion();
     }
 }
 
+function finishTest() {
+    testDiv.classList.add("hidden");
+    resultDiv.classList.remove("hidden");
+    resultDiv.innerHTML = `
+        <h2>Результат</h2>
+        <p>Баллы: <b>${score}</b></p>
+        <button onclick="location.reload()">Пройти снова</button>
+    `;
+}
+
+// ---- СПИСОК ВОПРОСОВ ----
+function renderQuestionsList(filter = "") {
+    questionsList.innerHTML = "";
+
+    questions
+        .filter(q => q.question.toLowerCase().includes(filter))
+        .forEach(q => {
+            let div = document.createElement("div");
+            div.className = "question-card";
+
+            let html = `<div>${q.question}</div><ul>`;
+            q.options.forEach((opt, i) => {
+                if (i === q.correct) {
+                    html += `<li class="correct-answer">${opt}</li>`;
+                } else {
+                    html += `<li>${opt}</li>`;
+                }
+            });
+            html += "</ul>";
+
+            div.innerHTML = html;
+            questionsList.appendChild(div);
+        });
+}
+
+searchInput.oninput = e => {
+    renderQuestionsList(e.target.value.toLowerCase());
+};
+
+// утилита
 function shuffle(arr) {
-    return arr.sort(() => Math.random() - 0.5);
+    for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
 }
